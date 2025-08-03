@@ -3,15 +3,16 @@ package main
 import (
 	"crypto/tls"
 	"flag"
-	"fmt"
+	// "fmt"
 	"log"
 	"net/http"
 	"time"
 	"net/http/httputil"
 	"github.com/elazarl/goproxy"
+    _ "github.com/glebarez/go-sqlite"
 )
 
-func main() {
+func machine() {
 	verbose := flag.Bool("v", false, "should every proxy request be logged to stdout")
 	addr := flag.String("addr", ":8080", "proxy listen address")
 	flag.Parse()
@@ -34,6 +35,7 @@ func main() {
 	}
 
 	proxy := goproxy.NewProxyHttpServer()
+	conn := startRequestDB()
 
 
 	proxy.OnRequest().HandleConnect(customAlwaysMitm)
@@ -46,7 +48,8 @@ func main() {
 			}
 			return clonedTransport.RoundTrip(req)
 		})
-		requestLogger(req)
+
+		requestLogger(conn, req)
 		return req, nil
 	})
 
@@ -70,25 +73,24 @@ func main() {
 	log.Fatal(http.ListenAndServe(*addr, proxy))
 }
 
-func printLogger(data ReqLogger){
-	fmt.Println(data.timestamp + " | " + data.source_ip +" | " + data.method + " | " + data.url + " | " + data.user_agent)
-}
-
-func requestLogger(req *http.Request) {
-
+func requestLogger(connection *dbConnection, req *http.Request) {
 	raw_request, err := httputil.DumpRequest(req, true)
 	if err != nil {
 		log.Fatal(err)
 	}
-	
-	dataDump := ReqLogger{
+
+	dataDump := &ReqLogger{
 		timestamp: time.Now().UTC().Format(time.RFC1123),
 		source_ip: req.RemoteAddr,
 		method: req.Method,
 		url: req.Host,
 		user_agent: req.UserAgent(), 
-		raw_data: raw_request,	
+		raw_data: string(raw_request),	
 	}
-
+	insertRequestDataToDB(connection, dataDump)
 	printLogger(dataDump)
+}
+
+func main() {
+	machine()
 }

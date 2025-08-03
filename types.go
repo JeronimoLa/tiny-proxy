@@ -1,6 +1,9 @@
 
 package main
 
+import (
+	"database/sql"
+)
 
 type ReqLogger struct {
 	timestamp	string
@@ -8,5 +11,9 @@ type ReqLogger struct {
 	method		string
 	url 		string
 	user_agent	string	
-	raw_data	[]byte
+	raw_data	string
+}
+
+type dbConnection struct {
+	db	*sql.DB
 }

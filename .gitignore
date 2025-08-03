@@ -40,3 +40,5 @@ ideas.txt
 resources.md
 test.go
 src/
+tiny-proxy
+requests.db

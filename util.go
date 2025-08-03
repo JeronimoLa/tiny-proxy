@@ -3,6 +3,7 @@ package main
 import (
 	"crypto/x509"
 	"crypto/tls"
+	"fmt"
 )
 
 
@@ -15,4 +16,8 @@ func parseCA(caCert, caKey []byte) (*tls.Certificate, error) {
 		return nil, err
 	}
 	return &parsedCert, nil
+}
+
+func printLogger(data *ReqLogger){
+	fmt.Println(data.timestamp + " | " + data.source_ip +" | " + data.method + " | " + data.url + " | " + data.user_agent)
 }
