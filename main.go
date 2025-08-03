@@ -2,13 +2,12 @@ package main
 
 import (
 	"crypto/tls"
-	"crypto/x509"
 	"flag"
+	"fmt"
 	"log"
 	"net/http"
-	"fmt"
+	"time"
 	"net/http/httputil"
-
 	"github.com/elazarl/goproxy"
 )
 
@@ -36,6 +35,7 @@ func main() {
 
 	proxy := goproxy.NewProxyHttpServer()
 
+
 	proxy.OnRequest().HandleConnect(customAlwaysMitm)
 	proxy.OnRequest().DoFunc(func(req *http.Request, ctx *goproxy.ProxyCtx) (*http.Request, *http.Response) {
 		ctx.RoundTripper = goproxy.RoundTripperFunc(func(req *http.Request, ctx *goproxy.ProxyCtx) (*http.Response, error) {
@@ -46,13 +46,7 @@ func main() {
 			}
 			return clonedTransport.RoundTrip(req)
 		})
-		// fmt.Println(req.Method, req.Header, req.URL.String())
-		b, err := httputil.DumpRequest(req, true)
-		if err != nil {
-			log.Fatal(err)
-		}
-		fmt.Println(string(b))
-
+		requestLogger(req)
 		return req, nil
 	})
 
@@ -76,14 +70,25 @@ func main() {
 	log.Fatal(http.ListenAndServe(*addr, proxy))
 }
 
+func printLogger(data ReqLogger){
+	fmt.Println(data.timestamp + " | " + data.source_ip +" | " + data.method + " | " + data.url + " | " + data.user_agent)
+}
 
-func parseCA(caCert, caKey []byte) (*tls.Certificate, error) {
-	parsedCert, err := tls.X509KeyPair(caCert, caKey)
+func requestLogger(req *http.Request) {
+
+	raw_request, err := httputil.DumpRequest(req, true)
 	if err != nil {
-		return nil, err
+		log.Fatal(err)
 	}
-	if parsedCert.Leaf, err = x509.ParseCertificate(parsedCert.Certificate[0]); err != nil {
-		return nil, err
+	
+	dataDump := ReqLogger{
+		timestamp: time.Now().UTC().Format(time.RFC1123),
+		source_ip: req.RemoteAddr,
+		method: req.Method,
+		url: req.Host,
+		user_agent: req.UserAgent(), 
+		raw_data: raw_request,	
 	}
-	return &parsedCert, nil
+
+	printLogger(dataDump)
 }
