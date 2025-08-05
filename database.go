@@ -29,7 +29,7 @@ func getDBInstance() (*dbConnection, error) {
 }
 
 func createRequestTable(connection *dbConnection) {
-	sql_table := `CREATE TABLE IF NOT EXISTS network (
+	sql_table := `CREATE TABLE IF NOT EXISTS internal_network (
 		id INTEGER PRIMARY KEY,
 		timestamp TEXT NOT NULL,
 		source_ip TEXT NOT NULL,
