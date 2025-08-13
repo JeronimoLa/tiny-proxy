@@ -35,6 +35,7 @@ func createRequestTable(connection *dbConnection) {
 		source_ip TEXT NOT NULL,
 		method TEXT NOT NULL,
 		url TEXT NOT NULL,
+		url_domain TEXT NOT NULL,
 		user_agent TEXT NOT NULL,
 		raw_data TEXT NOT NULL
 	);`
@@ -58,10 +59,11 @@ func insertRequestDataToDB(connection *dbConnection, log *ReqLogger) {
 		source_ip,
 		method,
 		url,
+		url_domain,
 		user_agent,
-		raw_data) VALUES (?, ?, ?, ?, ?, ?);`
+		raw_data) VALUES (?, ?, ?, ?, ?, ?, ?);`
 	
-	result, err := connection.db.Exec(insert_sql, log.timestamp, log.source_ip, log.method, log.url, log.user_agent, log.raw_data)
+	result, err := connection.db.Exec(insert_sql, log.timestamp, log.source_ip, log.method, log.url, log.url_domain, log.user_agent, log.raw_data)
 	if err != nil {
 		fmt.Println(err)
 	}

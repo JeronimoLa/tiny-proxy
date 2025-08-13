@@ -19,5 +19,7 @@ func parseCA(caCert, caKey []byte) (*tls.Certificate, error) {
 }
 
 func printLogger(data *ReqLogger){
-	fmt.Println(data.timestamp + " | " + data.source_ip +" | " + data.method + " | " + data.url + " | " + data.user_agent)
+	// fmt.Println(data.timestamp + " | " + data.source_ip +" | " + data.method + " | " + data.url + " | " + data.url_domain + " | " + data.user_agent)
+	fmt.Println(data.method + " | " + data.url + " | " + data.url_domain + " | " + data.user_agent)
 }
+

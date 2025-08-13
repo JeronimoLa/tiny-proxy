@@ -10,6 +10,7 @@ type ReqLogger struct {
 	source_ip	string
 	method		string
 	url 		string
+	url_domain	string
 	user_agent	string	
 	raw_data	string
 }

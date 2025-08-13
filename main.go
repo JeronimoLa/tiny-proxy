@@ -3,13 +3,15 @@ package main
 import (
 	"crypto/tls"
 	"flag"
+
 	// "fmt"
 	"log"
 	"net/http"
-	"time"
 	"net/http/httputil"
+	"time"
+
 	"github.com/elazarl/goproxy"
-    _ "github.com/glebarez/go-sqlite"
+	_ "github.com/glebarez/go-sqlite"
 )
 
 func machine() {
@@ -48,7 +50,6 @@ func machine() {
 			}
 			return clonedTransport.RoundTrip(req)
 		})
-
 		requestLogger(conn, req)
 		return req, nil
 	})
@@ -83,7 +84,8 @@ func requestLogger(connection *dbConnection, req *http.Request) {
 		timestamp: time.Now().UTC().Format(time.RFC1123),
 		source_ip: req.RemoteAddr,
 		method: req.Method,
-		url: req.Host,
+		url: req.URL.String(),
+		url_domain: req.Host,
 		user_agent: req.UserAgent(), 
 		raw_data: string(raw_request),	
 	}
