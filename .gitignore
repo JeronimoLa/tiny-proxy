@@ -30,15 +30,17 @@ go.work.sum
 # Editor/IDE
 .vscode/
 
-
-
 # MISC
+app/
+src/
+docs/
+pkg/
 cert.go
 cert.pem
 key.pem
-ideas.txt
+ideas.md
 resources.md
 test.go
-src/
-tiny-proxy
+
 requests.db
+

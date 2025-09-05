@@ -3,23 +3,24 @@ package proxy
 import (
 	"crypto/tls"
 	"flag"
-	// "fmt"
 	"log"
 	"net/http"
+
 	// "net/http/httputil"
-	// "time"
 
 	"github.com/elazarl/goproxy"
 	_ "github.com/glebarez/go-sqlite"
 	"github.com/jeronimoLa/tiny-proxy/internal/db"
 )
 
+
 func Start() {
 	verbose := flag.Bool("v", false, "should every proxy request be logged to stdout")
-	addr := flag.String("addr", ":8080", "proxy listen address")
+	addr := flag.String("addr", ":9091", "proxy listen address")
 	flag.Parse()
 
 	cert, err := parseCA(_caCert, _caKey)
+
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -72,9 +73,3 @@ func Start() {
 
 	log.Fatal(http.ListenAndServe(*addr, proxy))
 }
-
-
-
-// func main() {
-	// machine()
-// }

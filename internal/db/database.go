@@ -19,7 +19,7 @@ var (
 func getDBInstance() (*dbConnection, error) {
 	var initError error
 	once.Do(func() {
-		db, err := sql.Open("sqlite", "requests.db")
+		db, err := sql.Open("sqlite", "../../internal/db/requests.db")
 		if err != nil {
 			initError = fmt.Errorf("failed to open database: %v", err)
 			return
